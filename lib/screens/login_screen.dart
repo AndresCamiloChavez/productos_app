@@ -117,7 +117,7 @@ class _LoginForm extends StatelessWidget {
 
                         await Future.delayed(Duration(milliseconds: 2000));
                         loginFromProvider.isLoading = false;
-                        // Navigator.pushReplacementNamed(context, HomeScreen.homeRoute);
+                        Navigator.pushReplacementNamed(context, HomeScreen.homeRoute);
                       },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
