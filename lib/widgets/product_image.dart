@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ProductImage extends StatelessWidget {
@@ -15,21 +17,9 @@ class ProductImage extends StatelessWidget {
         child: Opacity(
           opacity: 0.5,
           child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(45), topRight: Radius.circular(45)),
-            child: (pathImage == null)
-                ? const Image(
-                    image: AssetImage('assets/no-image.png'),
-                    fit: BoxFit.cover,
-                  )
-                : FadeInImage(
-                    image: NetworkImage(pathImage!),
-                    placeholder: const AssetImage(
-                      'assets/no-image.jpg',
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-          ),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(45), topRight: Radius.circular(45)),
+              child: getImage(pathImage)),
         ),
       ),
     );
@@ -37,10 +27,27 @@ class ProductImage extends StatelessWidget {
 
   BoxDecoration _buildBoxDecoration() => const BoxDecoration(
           borderRadius: BorderRadius.only(
-
               topLeft: Radius.circular(45), topRight: Radius.circular(45)),
           boxShadow: [
             BoxShadow(
                 color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
           ]);
+
+  Widget getImage(String? picture) {
+    if (picture == null) {
+      return const Image(
+        image: AssetImage('assets/no-image.png'),
+        fit: BoxFit.cover,
+      );
+    } else if (picture.startsWith('http')) {
+      return FadeInImage(
+        image: NetworkImage(pathImage!),
+        placeholder: const AssetImage(
+          'assets/no-image.jpg',
+        ),
+        fit: BoxFit.cover,
+      );
+    }
+    return Image.file(File(picture), fit: BoxFit.cover,);
+  }
 }

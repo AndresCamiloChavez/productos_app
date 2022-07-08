@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:productos_app/providers/product_form_provider.dart';
 import 'package:productos_app/services/products_service.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../models/models.dart';
 import '../widgets/widgets.dart';
@@ -63,7 +64,17 @@ class _ProductScreenBody extends StatelessWidget {
                         color: Colors.white,
                         size: 40,
                       ),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () async {
+                        final ImagePicker _picker = ImagePicker();
+                        final XFile? pickedFile = await _picker.pickImage(
+                            source: ImageSource.gallery, imageQuality: 100);
+                        if (pickedFile == null) {
+                          return;
+                        }
+                        productService
+                            .updateSelectedProductImage(pickedFile.path);
+                        print('path image ${pickedFile.path}');
+                      },
                     )),
               ],
             ),
@@ -78,12 +89,15 @@ class _ProductScreenBody extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.save),
-          onPressed: () {
+          onPressed: () async {
             if (productFormProvider.isValidForm()) {
-              productService.saveOrCreateProduct(product);
-             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-             content: Text("Sending Message"),
-    ));
+              final String? imageUrl = await productService.uploadImage();
+
+              if (imageUrl != null) product.picture = imageUrl;
+              await productService.saveOrCreateProduct(product);
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //   content: Text("Sending Message"),
+              // ));
             }
           }),
     );
