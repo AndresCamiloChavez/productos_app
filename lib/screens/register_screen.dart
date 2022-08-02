@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:productos_app/providers/login_form_provider.dart';
 import 'package:productos_app/screens/screens.dart';
-import 'package:productos_app/services/notifications_service.dart';
+import 'package:productos_app/services/services.dart';
 import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-import '../services/services.dart';
 import '../ui/input_decoration.dart';
 
-class LoginScreen extends StatelessWidget {
-  static const String loginRoute = 'login';
+class RegisterScreen extends StatelessWidget {
+  static const String registerRoute = 'register';
 
-  const LoginScreen({Key? key}) : super(key: key);
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class LoginScreen extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'Login',
+                  'Registro',
                   style: Theme.of(context).textTheme.headline4,
                 ),
                 const SizedBox(
@@ -46,8 +45,7 @@ class LoginScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(
-                    context, RegisterScreen.registerRoute);
+                Navigator.pushReplacementNamed(context, LoginScreen.loginRoute);
               },
               style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(
@@ -55,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   shape: MaterialStateProperty.all(const StadiumBorder())),
               child: const Text(
-                'Crear una nueva cuenta',
+                '¿Ya tienes una cuenta?',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -89,7 +87,7 @@ class _LoginForm extends StatelessWidget {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecorations.authInputDecoration(
                     hintText: 'example@email.com',
-                    labelText: 'Correo electrónico',
+                    labelText: 'Corre electrónico',
                     prefixIcon: Icons.alternate_email_sharp),
                 onChanged: (value) {
                   loginFromProvider.email = value;
@@ -132,17 +130,17 @@ class _LoginForm extends StatelessWidget {
                         final authService =
                             Provider.of<AuthService>(context, listen: false);
                         loginFromProvider.isLoading = true;
-                        final String? errorMessage = await authService.login(
-                            loginFromProvider.email,
-                            loginFromProvider.password);
+                        final String? errorMessage =
+                            await authService.createUser(
+                                loginFromProvider.email,
+                                loginFromProvider.password);
                         if (errorMessage == null) {
                           loginFromProvider.isLoading = false;
                           Navigator.pushReplacementNamed(
                               context, HomeScreen.homeRoute);
-                        } else {
-                          NotificationsService.showSnackbar(
-                              'Ocurrió une error!, Valores incorrectos');
+                        }else{
                           loginFromProvider.isLoading = false;
+
                         }
                       },
                 shape: RoundedRectangleBorder(
@@ -154,8 +152,8 @@ class _LoginForm extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   child: Text(
-                    loginFromProvider.isLoading ? 'Cargando...' : 'Ingresar',
-                    style: TextStyle(color: Colors.white),
+                    loginFromProvider.isLoading ? 'Cargando...' : 'Crear',
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               )
